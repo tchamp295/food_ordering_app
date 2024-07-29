@@ -41,8 +41,7 @@ const Navbar = ({ openNav }) => {
         <div className="font-bold text-3xl text-orange-500 flex items-center">
           <Image src="/pizza.png" alt="logo" width={40} height={40} />
           <span className="ml-2 font-logo text-2xl text-[#092540] lg:text-4xl">
-            Pizzas{" "}
-          </span>
+Yumly          </span>
         </div>
         <ul className="hidden md:flex space-x-10 items-center">
           <li>
