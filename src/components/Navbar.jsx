@@ -1,123 +1,192 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { BsCart2 } from "react-icons/bs";
-import { CiSearch } from "react-icons/ci";
-import { RxHamburgerMenu } from "react-icons/rx";
-
+import { motion } from "framer-motion";
+import { Search, ShoppingCart, Menu, User, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 const Navbar = ({ openNav }) => {
-  const [activeItem, setActiveItem] = useState("Home");
-  const [cartQuantity, setCartQuantity] = useState(10);
   const [navSticky, setNavSticky] = useState(false);
   const { data: session } = useSession();
+  const [cartQuantity, setCartQuantity] = useState(10);
+
   useEffect(() => {
     const handler = () => {
-      if (window.scrollY >= 90) {
-        setNavSticky(true);
-      } else {
-        setNavSticky(false);
-      }
+      setNavSticky(window.scrollY >= 90);
     };
     window.addEventListener("scroll", handler);
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
-  const stickyStyle = navSticky
-    ? "bg-[#ffffff] shadow-orange-200  shadow-sm "
-    : "#ffffff";
+  // Helper function to truncate name
+  const getTruncatedName = (name) => {
+    if (!name) return "";
+    return name.split(" ")[0];
+  };
 
-  let displayName = session ? session.user.name : "";
-  if (displayName.includes(" ")) {
-    displayName = displayName.split(" ")[0];
-  }
   return (
-    <div
-      className={` fixed top-0 w-[100%] ${stickyStyle} transition-all duration-300  z-[1000]  `}
+    <motion.nav
+      initial={{ opacity: 0, y: -50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={`
+        fixed top-0 w-full z-[1000] transition-all duration-300
+        ${navSticky ? "bg-white/70 backdrop-blur-md shadow-lg" : "bg-white"}
+      `}
     >
-      <div className=" flex items-center h-[10vh] justify-between max-w-6xl  mx-auto p-3">
-        <div className="font-bold text-3xl text-orange-500 flex items-center">
-          <Image src="/pizza.png" alt="logo" width={40} height={40} />
-          <span className="ml-2 font-logo text-2xl text-[#092540] lg:text-4xl">
-Yumly          </span>
-        </div>
-        <ul className="hidden md:flex space-x-10 items-center">
-          <li>
-            <Link href={"/"} className="nav_link ">
-              {" "}
-              Home
-            </Link>
-          </li>
-          <li>
-            <a className="nav_link" href="#">
-              Menu
-            </a>
-          </li>
-          <li>
-            <a className="nav_link" href="#">
-              Contact
-            </a>
-          </li>
-          <li>
-            <a className="nav_link" href="#">
-              About
-            </a>
-          </li>
-        </ul>
-        <div className="flex gap-6 items-center">
-          <CiSearch className="text-xl text-[#49557e] cursor-pointer" />
-          <div className="relative">
-            {/* Cart icon */}
-            <BsCart2 className="text-2xl text-[#49557e] cursor-pointer" />
-            {/* Cart quantity value */}
-            {cartQuantity > 0 && (
-              <div className="absolute -top-2 -right-2 bg-orange-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
-                {cartQuantity}
-              </div>
-            )}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 lg:h-18">
+          {/* Logo Section */}
+          <motion.div
+            whileHover={{ rotate: 5, scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center cursor-pointer"
+          >
+            <Image
+              src="/pizza.png"
+              alt="Yumly Logo"
+              width={50}
+              height={50}
+              className="transition-transform duration-300"
+            />
+            <span className="ml-3 text-2xl lg:text-3xl font-bold text-[#092540] tracking-tight">
+              Yumly
+            </span>
+          </motion.div>
+
+          {/* Navigation Links */}
+          <ul className="hidden md:flex space-x-6 lg:space-x-8 items-center">
+            {["Home", "Menu", "Contact", "About"].map((item) => (
+              <motion.li
+                key={item}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+                  className="text-gray-700 hover:text-orange-500 transition-colors 
+                  text-base lg:text-lg font-medium"
+                >
+                  {item}
+                </Link>
+              </motion.li>
+            ))}
+          </ul>
+
+          {/* Right Side Actions */}
+          <div className="flex items-center space-x-4 lg:space-x-6">
+            {/* Search and Cart Icons */}
+            <div className="flex items-center space-x-4">
+              <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
+                <Search
+                  className="text-xl text-gray-600 cursor-pointer 
+                  hover:text-orange-500 transition-colors"
+                />
+              </motion.div>
+
+              <motion.div
+                className="relative"
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <ShoppingCart
+                  className="text-xl text-gray-600 cursor-pointer 
+                  hover:text-orange-500 transition-colors"
+                />
+                {cartQuantity > 0 && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-2 -right-2 
+                    bg-orange-500 text-white rounded-full 
+                    w-5 h-5 flex items-center justify-center 
+                    text-xs font-bold"
+                  >
+                    {cartQuantity}
+                  </motion.span>
+                )}
+              </motion.div>
+            </div>
+
+            {/* Authentication Buttons */}
+            <div className="hidden md:flex items-center space-x-4">
+              {session ? (
+                <>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      href="/profile"
+                      className="flex items-center space-x-2 text-sm text-gray-700 hover:text-orange-500 
+                      font-medium transition-colors"
+                    >
+                      <User size={18} />
+                      <span>Hi, {getTruncatedName(session.user.name)}</span>
+                    </Link>
+                  </motion.div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => signOut()}
+                    className="flex items-center space-x-2 px-4 py-2 text-sm font-semibold 
+                    border border-orange-500 text-orange-500 
+                    rounded-full hover:bg-orange-500 hover:text-white 
+                    transition-all duration-300"
+                  >
+                    <LogOut size={18} />
+                    <span>Logout</span>
+                  </motion.button>
+                </>
+              ) : (
+                <>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      href="/register"
+                      className="px-4 py-2 text-sm font-semibold 
+                      bg-orange-500 text-white rounded-full 
+                      hover:bg-orange-600 transition-all duration-300"
+                    >
+                      Register
+                    </Link>
+                  </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      href="/login"
+                      className="px-4 py-2 text-sm font-semibold 
+                      border border-orange-500 text-orange-500 
+                      rounded-full hover:bg-orange-500 hover:text-white 
+                      transition-all duration-300"
+                    >
+                      Login
+                    </Link>
+                  </motion.div>
+                </>
+              )}
+            </div>
+
+            {/* Mobile Menu Toggle */}
+            <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.9 }}>
+              <Menu
+                onClick={openNav}
+                className="md:hidden text-2xl text-gray-600 
+                hover:text-orange-500 transition-colors cursor-pointer"
+              />
+            </motion.div>
           </div>
-          <div className="hidden md:flex gap-5 items-center">
-            {session ? (
-              <>
-                <Link
-                  href={"/profile"}
-                  className="text-sm font-semibold text-gray-700"
-                >
-                  Welcome, {displayName}
-                </Link>
-                <button
-                  onClick={() => signOut()}
-                  className="py-2 px-6 font-semibold bg-transparent border border-orange-500 text-sm text-orange-500 rounded-md shadow-md hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition duration-300"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  href={"/register"}
-                  className="py-2 px-6 font-semibold bg-orange-500 text-sm text-white rounded-md shadow-md hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition duration-300"
-                >
-                  Register
-                </Link>
-                <Link
-                  className="py-2 px-6 font-semibold bg-transparent border border-orange-500 text-sm text-orange-500 rounded-md shadow-md hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-opacity-50 transition duration-300"
-                  href={"/login"}
-                >
-                  Login
-                </Link>
-              </>
-            )}
-          </div>
         </div>
-        <RxHamburgerMenu
-          onClick={openNav}
-          className=" h-10 w-10 md:hidden rotate-180"
-        />
       </div>
-    </div>
+    </motion.nav>
   );
 };
+
 export default Navbar;

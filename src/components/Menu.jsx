@@ -1,9 +1,12 @@
 "use client";
+import React from "react";
 import { menu_list } from "../../public/assets";
 import MenuItem from "./MenuItem";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { motion } from "framer-motion";
+import CustomScrollButton from "@/utils/CustomScrollButton";
 
 const Menu = () => {
   const settings = {
@@ -14,42 +17,71 @@ const Menu = () => {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 3000,
-    cssEase: "ease-in-out",
+    cssEase: "linear",
     pauseOnHover: true,
+    prevArrow: <CustomScrollButton type="prev" />,
+    nextArrow: <CustomScrollButton type="next" />,
     responsive: [
+      {
+        breakpoint: 1280,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 1,
+        },
+      },
       {
         breakpoint: 1024,
         settings: {
           slidesToShow: 3,
+          slidesToScroll: 1,
         },
       },
       {
-        breakpoint: 768,
+        breakpoint: 640,
         settings: {
           slidesToShow: 2,
+          slidesToScroll: 1,
         },
       },
     ],
   };
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col border-b-2 border-[#e2e2e2] p-3">
-      <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-        Explore Our Menu
-      </h1>
-      <p className="text-gray-400 mb-3">
-        Dive into a world of flavors and experience gastronomic bliss like never
-        before.
-      </p>
+    <motion.section
+      className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8 relative"
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <motion.div
+        className="text-center mb-12"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+      >
+        <h2
+          className="text-4xl lg:text-5xl font-extrabold text-gray-900 
+          bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-600 
+          mb-4 tracking-tight"
+        >
+          Explore Our Menu
+        </h2>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Dive into a culinary journey where each dish tells a story of passion,
+          tradition, and unparalleled flavor.
+        </p>
+      </motion.div>
 
-     <div className="mb-3 px-3">
-        <Slider {...settings} >
+      <div className="menu-carousel-container overflow-hidden relative">
+        <Slider {...settings}>
           {menu_list.map((item, index) => (
-            <MenuItem key={index} image={item.menu_image} name={item.menu_name} />
+            <div key={index} className="px-2">
+              <MenuItem image={item.menu_image} name={item.menu_name} />
+            </div>
           ))}
         </Slider>
       </div>
-    </div>
+    </motion.section>
   );
 };
 
