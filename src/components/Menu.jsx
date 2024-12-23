@@ -61,7 +61,7 @@ const Menu = () => {
       >
         <h2
           className="text-4xl lg:text-5xl font-extrabold text-gray-900 
-          bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-600 
+          bg-clip-text text-transparent bg-red-600
           mb-4 tracking-tight"
         >
           Explore Our Menu

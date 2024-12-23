@@ -6,7 +6,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { TiLockClosedOutline } from "react-icons/ti";
 import { HiEye, HiEyeOff } from "react-icons/hi";
-import Layout from "../home/layout";
 import { signIn } from "next-auth/react";
 
 const LoginPage = () => {
@@ -40,7 +39,7 @@ const LoginPage = () => {
     }
   };
   return (
-    <Layout>
+
       <div className="flex items-center justify-center h-[400px] p-3">
         <div className="max-w-md w-full mx-auto p-8 bg-white rounded-lg shadow-lg">
           <h1 className="text-4xl text-orange-500 mb-8 text-center">Login</h1>
@@ -86,7 +85,7 @@ const LoginPage = () => {
           <button className="mt-4 ">Login with Google</button>
         </div>
       </div>
-    </Layout>
+  
   );
 };
 

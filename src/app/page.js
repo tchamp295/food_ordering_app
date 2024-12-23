@@ -1,6 +1,14 @@
-import HomePage from "@/components/HomePage";
-export default function Home() {
+import FoodDisplay from "@/components/FoodDisplay";
+import Hero from "@/components/Hero";
+import Menu from "@/components/Menu";
+
+const HomePage = () => {
   return (
-   <HomePage />
+    <>
+      <Hero />
+      <Menu />
+      <FoodDisplay />
+    </>
   );
-}
+};
+export default HomePage;
