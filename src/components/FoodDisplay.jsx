@@ -50,12 +50,12 @@ const FoodDisplay = () => {
     >
       <div className="max-w-6xl mx-auto">
         <motion.h1
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 text-center tracking-tight leading-tight"
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center text-4xl font-bold text-gray-800 leading-tight mb-8"
         >
-          Discover Delicious Dishes Near You
+          Taste the Best <span className="text-red-600">Cuisines</span> Today!
         </motion.h1>
 
         <AnimatePresence>
