@@ -1,13 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import {
   Search,
   ShoppingCart,
   ChevronDown,
-  User,
   LogOut,
   Pizza,
   Coffee,
@@ -87,16 +85,15 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* Logo - Updated to match footer */}
           <Link href="/" className="flex items-center space-x-2">
-            <Image
-              src="/pizza.png"
-              alt="Yumly Logo"
-              width={40}
-              height={40}
-              className="object-contain"
-            />
-            <span className="text-xl font-bold text-gray-800">Yumly</span>
+            <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-lg font-bold">Y</span>
+            </div>
+            <span className="text-xl font-extrabold tracking-tight text-gray-900">
+              Yumly
+              <span className="text-red-500">.</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -141,7 +138,6 @@ const Navbar = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-4">
-            {/* Search and Cart - Always visible */}
             <button className="text-gray-600 hover:text-gray-800">
               <Search size={20} />
             </button>
