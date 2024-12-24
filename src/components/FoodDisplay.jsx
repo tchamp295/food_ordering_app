@@ -2,38 +2,153 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { food_list } from "../../public/assets";
-import { ChevronDown, Sparkles } from "lucide-react";
+import { ChevronDown, Sparkles, Minus, Plus, X } from "lucide-react";
 
-const FoodDisplayItem = ({ name, description, price, image }) => {
-  // console.log("FoodDisplayItem props:", { name, description, price, image });
-  const imageUrl = typeof image === "object" ? image.src : image;
+const QuantityModal = ({ item, isOpen, onClose, onAddToCart }) => {
+  const [quantity, setQuantity] = useState(1);
+
+  const handleIncrement = () => setQuantity((prev) => prev + 1);
+  const handleDecrement = () => setQuantity((prev) => Math.max(1, prev - 1));
 
   return (
-    <motion.div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
-      <div className="relative h-48 overflow-hidden">
-        <img
-          src={imageUrl || "/api/placeholder/400/300"}
-          alt={name}
-          className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
-        />
-        <div className="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded-full">
-          <span className="text-red-500 font-semibold">${price}</span>
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-40"
+            onClick={onClose}
+          />
+          <div className="fixed inset-0 flex items-center justify-center z-50">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md m-4"
+            >
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="flex items-center space-x-4 mb-6">
+                <img
+                  src={
+                    typeof item.image === "object" ? item.image.src : item.image
+                  }
+                  alt={item.name}
+                  className="w-20 h-20 object-cover rounded-lg"
+                />
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">
+                    {item.name}
+                  </h3>
+                  <p className="text-red-500 font-semibold">${item.price}</p>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-sm text-gray-600 mb-2">Select Quantity:</p>
+                <div className="flex items-center justify-center space-x-4">
+                  <button
+                    onClick={handleDecrement}
+                    className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center
+                             hover:bg-gray-200 transition-colors"
+                  >
+                    <Minus size={20} />
+                  </button>
+                  <span className="text-xl font-semibold w-12 text-center">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={handleIncrement}
+                    className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center
+                             hover:bg-gray-200 transition-colors"
+                  >
+                    <Plus size={20} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-gray-600">Total:</span>
+                <span className="text-xl font-bold text-gray-800">
+                  ${(item.price * quantity).toFixed(2)}
+                </span>
+              </div>
+
+              <button
+                onClick={() => {
+                  onAddToCart(item, quantity);
+                  onClose();
+                }}
+                className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-3 rounded-lg
+                         transition-colors duration-300"
+              >
+                Add to Cart
+              </button>
+            </motion.div>
+          </div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+};
+
+const FoodDisplayItem = ({ item, onAddToCart }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const imageUrl = typeof item.image === "object" ? item.image.src : item.image;
+
+  return (
+    <>
+      <motion.div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
+        <div className="relative h-48 overflow-hidden">
+          <img
+            src={imageUrl || "/api/placeholder/400/300"}
+            alt={item.name}
+            className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
+          />
+          <div className="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded-full">
+            <span className="text-red-500 font-semibold">${item.price}</span>
+          </div>
         </div>
-      </div>
-      <div className="p-5">
-        <h3 className="text-xl font-bold text-gray-800 mb-2">{name}</h3>
-        <p className="text-gray-600 text-sm line-clamp-2 mb-4">{description}</p>
-        <button className="w-full bg-red-50 hover:bg-red-100 text-red-500 font-medium py-2 rounded-lg transition-colors duration-300">
-          Add to Cart
-        </button>
-      </div>
-    </motion.div>
+        <div className="p-5">
+          <h3 className="text-xl font-bold text-gray-800 mb-2">{item.name}</h3>
+          <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+            {item.description}
+          </p>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="w-full bg-red-50 hover:bg-red-100 text-red-500 font-medium py-2 rounded-lg transition-colors duration-300"
+          >
+            Add to Cart
+          </button>
+        </div>
+      </motion.div>
+
+      <QuantityModal
+        item={item}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAddToCart={onAddToCart}
+      />
+    </>
   );
 };
 
 const FoodDisplay = () => {
   const [visibleItems, setVisibleItems] = useState(6);
   const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const handleAddToCart = (item, quantity) => {
+    // Here you would typically dispatch to your cart state management system
+    console.log("Adding to cart:", { item, quantity });
+    // Example: dispatch(addToCart({ ...item, quantity }));
+  };
 
   const categories = Array.from(
     new Set(["All", ...food_list.map((item) => item.category)])
@@ -123,7 +238,7 @@ const FoodDisplay = () => {
           >
             {displayedFood.map((item) => (
               <motion.div key={item._id} variants={itemVariants} layout>
-                <FoodDisplayItem {...item} />
+                <FoodDisplayItem item={item} onAddToCart={handleAddToCart} />
               </motion.div>
             ))}
           </motion.div>
