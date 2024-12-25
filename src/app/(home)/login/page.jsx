@@ -1,91 +1,157 @@
-"use client";
-import { FiMail, FiLock } from "react-icons/fi"; // Importing necessary icons
-import Link from "next/link";
-import { useState } from "react";
-
-import { useRouter } from "next/navigation";
-import { TiLockClosedOutline } from "react-icons/ti";
+"use client"
+import React, { useState } from "react";
+import { FiMail, FiLock } from "react-icons/fi";
 import { HiEye, HiEyeOff } from "react-icons/hi";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 const LoginPage = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const res = await signIn("credentials", {
-        email,
-        password,
+        email: formData.email,
+        password: formData.password,
         redirect: false,
       });
       if (res.error) {
-        setError("Invalid credentials !");
-        setLoading(false); // Reset loading state on error
+        setError("Invalid credentials!");
         return;
       }
-      router.replace("/profile"); // Corrected redirection
+      router.replace("/admin");
     } catch (error) {
-      console.error(error);
-      setError("An unexpected error occurred."); // Provide generic error message
-      setLoading(false); // Reset loading state on error
+      setError("An unexpected error occurred.");
+    } finally {
+      setLoading(false);
     }
   };
-  return (
 
-      <div className="flex items-center justify-center h-[400px] p-3">
-        <div className="max-w-md w-full mx-auto p-8 bg-white rounded-lg shadow-lg">
-          <h1 className="text-4xl text-orange-500 mb-8 text-center">Login</h1>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
-              <FiMail className="text-gray-400 mr-3" />
-              <input
-                id="email"
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                placeholder="Enter your email"
-                className="w-full bg-transparent focus:outline-none"
-              />
-            </div>
-            <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
-              <FiLock className="text-gray-400 mr-3" />
-              <input
-                id="password"
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-                placeholder="Enter your password"
-                className="w-full bg-transparent focus:outline-none focus:bg-transparent"
-              />
-            </div>
-            <div className="mt-4 text-right">
-              <Link href="#" className="text-blue-500 hover:underline">
-                Forgot Password?
-              </Link>
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-400 transition-colors w-full"
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-            {error && (
-              <div className="bg-red-500 text-white py-2 px-4 rounded-md">
-                {error}
-              </div>
-            )}
-          </form>
-          <button className="mt-4 ">Login with Google</button>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
+        <div>
+          <h1 className="text-4xl font-bold text-center text-red-600 mb-2">
+            Welcome Back
+          </h1>
+          <p className="text-center text-gray-600">Sign in to continue</p>
         </div>
+
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div className="space-y-4">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                <FiMail className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                name="email"
+                type="email"
+                required
+                onChange={handleChange}
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"
+                placeholder="Email address"
+              />
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                <FiLock className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                name="password"
+                type={showPassword ? "text" : "password"}
+                required
+                onChange={handleChange}
+                className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"
+                placeholder="Password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                {showPassword ? (
+                  <HiEyeOff className="h-5 w-5 text-gray-400" />
+                ) : (
+                  <HiEye className="h-5 w-5 text-gray-400" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+              />
+              <label
+                htmlFor="remember-me"
+                className="ml-2 block text-sm text-gray-900"
+              >
+                Remember me
+              </label>
+            </div>
+            <Link
+              href="/forgot-password"
+              className="text-sm font-medium text-red-600 hover:text-red-500"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Signing in..." : "Sign in"}
+          </button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">
+                Or continue with
+              </span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+          >
+            <img
+              src="/api/placeholder/20/20"
+              alt="Google"
+              className="w-5 h-5"
+            />
+            Google
+          </button>
+        </form>
       </div>
-  
+    </div>
   );
 };
 
