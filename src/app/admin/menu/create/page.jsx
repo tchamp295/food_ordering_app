@@ -75,7 +75,7 @@ const handleSubmit = async (e) => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Create a Product</h1>
+      <h1 className="text-2xl font-bold mb-4">Create Product</h1>
       {success && (
         <div className="bg-green-100 text-green-800 p-2 rounded mb-4">
           Product created successfully!
