@@ -1,5 +1,5 @@
 import { connectMongoDB } from "@/lib/mongoose";
-import Contact from "@/models/Contact";
+import Contact from "models/Contact";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
@@ -8,10 +8,7 @@ export async function POST(req) {
     await connectMongoDB();
     await Contact.create({ name, email, phone, message });
 
-    return NextResponse.json(
-      { message: "success!" },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: "success!" }, { status: 200 });
   } catch (error) {
     console.error("Error submitting form:", error);
     return NextResponse.json(
