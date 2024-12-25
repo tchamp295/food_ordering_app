@@ -1,5 +1,5 @@
 import { connectMongoDB } from "@/lib/mongoose";
-import Contact from "models/Contact";
+import Contact from "@/models/Contact";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {

@@ -1,5 +1,5 @@
 import { connectMongoDB } from "@/lib/mongoose";
-import { Category } from "models/Category";
+import { Category } from "@/models/Category";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
